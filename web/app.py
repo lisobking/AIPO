@@ -154,46 +154,118 @@ class WebPOManager:
         wb = load_workbook(output_path)
         ws = wb.active
         
-        # 본문 영역(18행 이하)만 정화 후 데이터 주입
+        # 2. 템플릿 기반 주입 (자사 정보 보존 전략)
+        output_filename = f"PO_Draft_{file_path.stem}.xlsx"
+        output_path = RESULT_FOLDER / output_filename
+        shutil.copy(STD_TEMPLATE, output_path)
+        
+        wb = load_workbook(output_path)
+        ws = wb.active
+        
+        # 🛡️ 보안 및 무결성: 병합 셀 에러 방지를 위해 기존 데이터 삭제 방식을 '공백 주입'으로 변경
         start_row = 18
-        for r in range(start_row, start_row + 30):
-            for c in range(2, 8):
+        for r in range(start_row, start_row + 40):
+            for c in range(2, 9):
                 try: ws.cell(row=r, column=c).value = None
                 except: pass
 
+        from openpyxl.styles import Border, Side, Alignment, Font, PatternFill
+        
+        # 🛡️ 병합 셀 투과 주입 함수
+        def safe_write(row, col, value):
+            try:
+                ws.cell(row=row, column=col, value=value)
+            except: pass
+
+        # 디자이너의 조색
+        thin_gray = Side(border_style="thin", color="D3D3D3")
+        thin_black = Side(border_style="thin", color="000000")
+        no_border = Side(border_style=None)
+        
+        body_border = Border(left=thin_black, right=thin_black, top=thin_gray, bottom=thin_gray)
+        remarks_border = Border(left=no_border, right=no_border, top=no_border, bottom=no_border)
+
         current_row = start_row
         item_no = 1
-        for idx, item in enumerate(items_to_write):
-            # 대분류(수량/단가 모두 0)인 경우 NO 생략
+        total_sum = 0
+        
+        for item in items_to_write:
+            # 메인 행 주입
             if item['qty'] > 0 or item['price'] > 0:
-                ws.cell(row=current_row, column=2, value=item_no)
+                safe_write(current_row, 2, item_no)
                 item_no += 1
             
-            ws.cell(row=current_row, column=4, value=item['main'])
+            # C=구분, D=명칭 매핑
+            if len(str(item['main'])) < 6:
+                safe_write(current_row, 3, str(item['main']))
+            else:
+                safe_write(current_row, 4, str(item['main']))
             
-            # 0이 아닌 경우만 값 주입 (여백의 미)
-            if item['qty'] > 0: ws.cell(row=current_row, column=5, value=item['qty'])
-            if item['price'] > 0: ws.cell(row=current_row, column=6, value=item['price'])
-            if item['qty'] > 0 and item['price'] > 0:
-                ws.cell(row=current_row, column=7, value=item['qty'] * item['price'])
+            if item['qty'] > 0: safe_write(current_row, 5, item['qty'])
+            if item['price'] > 0: safe_write(current_row, 6, item['price'])
             
-            ws.cell(row=current_row, column=4).alignment = Alignment(wrapText=True, vertical='center')
+            line_total = item['qty'] * item['price']
+            if line_total > 0:
+                safe_write(current_row, 7, line_total)
+                total_sum += line_total
+            
+            for c in range(2, 8):
+                try: ws.cell(row=current_row, column=c).border = body_border
+                except: pass
             current_row += 1
             
             for detail in item['details']:
-                ws.insert_rows(current_row)
-                target_cell = ws.cell(row=current_row, column=4, value=f"- {detail.strip()}")
-                # 디자이너의 터치: 상세내역 들여쓰기 및 폰트 크기 조절
-                target_cell.alignment = Alignment(horizontal='left', vertical='center', indent=1)
-                
-                # 개발자 1: 서식(테두리 등) 완벽 복제
+                safe_write(current_row, 4, str(detail).strip().lstrip('-').strip())
+                try: ws.cell(row=current_row, column=4).alignment = Alignment(horizontal='left', indent=1)
+                except: pass
                 for c in range(2, 8):
-                    source_cell = ws.cell(row=start_row, column=c)
-                    new_cell = ws.cell(row=current_row, column=c)
-                    if source_cell.has_style:
-                        new_cell.border = copy(source_cell.border)
-                        new_cell.font = copy(source_cell.font)
+                    try: ws.cell(row=current_row, column=c).border = body_border
+                    except: pass
                 current_row += 1
+
+        # 3. 합계 영역 (Yellow Zone)
+        if total_sum > 0:
+            yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+            bold_font = Font(bold=True)
+            
+            for label, val in [("합  계(VAT 별도)", total_sum), ("합  계(VAT 포함)", int(total_sum * 1.1))]:
+                safe_write(current_row, 3, label)
+                try: ws.cell(row=current_row, column=3).font = bold_font
+                except: pass
+                safe_write(current_row, 6, int(val / 12))
+                safe_write(current_row, 7, val)
+                
+                for c in range(2, 8):
+                    try:
+                        ws.cell(row=current_row, column=c).fill = yellow_fill
+                        ws.cell(row=current_row, column=c).border = Border(left=thin_black, right=thin_black, top=thin_black, bottom=thin_black)
+                    except: pass
+                current_row += 1
+
+        # 4. 비고란 영역
+        current_row += 1
+        remarks = [
+            ("계약기간", f": 2026년 1월 1일 ~ 2026년 12월 30일 (1년)"),
+            ("대금지급", ": 매월 말 세금계산서 발행/원청 수금 후 익월 15일 현금 지급"),
+            ("납품장소", ": 고객사 지정위치"),
+            ("담당자", ": 가온아이 CS사업부 박지혜 (iii511@kaoni.com 02-2140-5884)"),
+            ("참  조", ": 첨부 견적서")
+        ]
+        for label, content in remarks:
+            safe_write(current_row, 3, label)
+            safe_write(current_row, 4, content)
+            try: 
+                ws.cell(row=current_row, column=3).font = bold_font
+                for c in range(2, 8):
+                    ws.cell(row=current_row, column=c).border = remarks_border
+            except: pass
+            current_row += 1
+
+        wb.save(output_path)
+        return output_filename
+
+        wb.save(output_path)
+        return output_filename
 
         wb.save(output_path)
         return output_filename
@@ -213,6 +285,19 @@ def convert_file():
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(str(RESULT_FOLDER), filename, as_attachment=True)
+
+# 🛡️ 비즈니스 보안: 휘발성 데이터 정책 (10분 후 자동 삭제)
+@app.before_request
+def cleanup_temp_files():
+    import time
+    now = time.time()
+    for folder in [UPLOAD_FOLDER, RESULT_FOLDER]:
+        for f in folder.glob("*"):
+            if f.name == ".gitkeep": continue
+            # 생성된 지 10분이 지난 파일은 즉시 삭제
+            if now - f.stat().st_mtime > 600:
+                try: f.unlink()
+                except: pass
 
 if __name__ == '__main__':
     # Render 등 클라우드 환경의 포트 대응
