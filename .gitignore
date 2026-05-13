@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+workspace/01_input_quotes/*
+workspace/02_output_pos/*
+!workspace/01_input_quotes/.gitkeep
+!workspace/02_output_pos/.gitkeep
+.DS_Store
+server.log
+nohup.out
+.venv/
+env/
+.gemini/
+agents/*.md
