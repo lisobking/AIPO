@@ -215,4 +215,6 @@ def download_file(filename):
     return send_from_directory(str(RESULT_FOLDER), filename, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # Render 등 클라우드 환경의 포트 대응
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host='0.0.0.0', port=port)
