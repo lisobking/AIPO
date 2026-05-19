@@ -2,58 +2,136 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>AutoPO Draft Master</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPO Draft Master 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 400px; }
-        .dropzone { border: 2px dashed #007aff; border-radius: 10px; padding: 40px 20px; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .dropzone:hover { background: #e8f2ff; }
-        h1 { color: #1d1d1f; margin-bottom: 5px; }
-        p { color: #86868b; font-size: 14px; }
-        #loader { display: none; margin-top: 20px; color: #007aff; font-weight: bold; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+
+        .container { width: 520px; }
+
+        /* 모드 토글 */
+        .mode-toggle { display: flex; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 4px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.08); }
+        .mode-btn { flex: 1; padding: 12px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; color: rgba(255,255,255,0.4); }
+        .mode-btn.active { background: linear-gradient(135deg, #007aff, #5856d6); color: #fff; box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
+        .mode-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
+
+        /* 카드 */
+        .card { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); padding: 40px; border-radius: 20px; text-align: center; transition: all 0.3s ease; }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        .subtitle { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 24px; }
+
+        /* 드롭존 */
+        .dropzone { border: 2px dashed rgba(0,122,255,0.3); border-radius: 14px; padding: 40px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px; color: rgba(255,255,255,0.5); }
+        .dropzone:hover { border-color: #007aff; background: rgba(0,122,255,0.05); color: #007aff; }
+        .dropzone.drag-over { border-color: #5856d6; background: rgba(88,86,214,0.1); transform: scale(1.02); }
+
+        /* 단가 입력 */
+        .price-input-wrap { margin-top: 16px; display: none; }
+        .price-input-wrap.show { display: block; }
+        .price-input-wrap label { font-size: 12px; color: rgba(255,255,255,0.5); display: block; margin-bottom: 6px; text-align: left; }
+        .price-input { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-size: 16px; font-family: 'Inter', monospace; outline: none; transition: border 0.3s; }
+        .price-input:focus { border-color: #007aff; }
+        .price-hint { font-size: 11px; color: rgba(255,255,255,0.3); text-align: right; margin-top: 4px; }
+
+        /* 상태 */
+        #loader { display: none; margin-top: 20px; color: #007aff; font-weight: 600; font-size: 14px; }
+        #result { display: none; margin-top: 16px; padding: 12px; background: rgba(48,209,88,0.1); border: 1px solid rgba(48,209,88,0.3); border-radius: 10px; color: #30d158; font-size: 13px; }
+
+        /* 모드별 숨기기 */
+        .panel { display: none; }
+        .panel.active { display: block; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>👔 AutoPO Draft</h1>
-        <p>견적서(Excel/PDF)를 드래그 앤 드롭 하세요.</p>
-        <div class="dropzone" id="dropzone">파일을 이곳에 놓으세요</div>
-        <div id="loader">변환 중... ⏳</div>
+    <div class="container">
+        <div class="mode-toggle">
+            <div class="mode-btn active" onclick="switchMode('po')" id="btn-po">📋 발주서 변환 (PO)</div>
+            <div class="mode-btn" onclick="switchMode('quote')" id="btn-quote">💰 견적서 생성 (Quote)</div>
+        </div>
+
+        <!-- PO 모드 -->
+        <div class="panel active" id="panel-po">
+            <div class="card">
+                <h1>👔 발주서 변환</h1>
+                <p class="subtitle">견적서(Excel/PDF)를 드래그 앤 드롭 하세요.</p>
+                <div class="dropzone" id="dropzone-po">📂 파일을 이곳에 놓으세요</div>
+                <div id="loader-po">변환 중... ⏳</div>
+            </div>
+        </div>
+
+        <!-- Quote 모드 -->
+        <div class="panel" id="panel-quote">
+            <div class="card">
+                <h1>💰 견적서 초안 생성</h1>
+                <p class="subtitle">공수산정내역서(Excel)를 드래그 앤 드롭 하세요.</p>
+                <div class="dropzone" id="dropzone-quote">📂 공수산정서를 이곳에 놓으세요</div>
+                <div class="price-input-wrap show">
+                    <label>M/D 단가 (원)</label>
+                    <input type="text" class="price-input" id="unitPrice" value="1,350,000" placeholder="예: 1,350,000">
+                    <div class="price-hint">항목별 공수 × 단가 = 금액 자동 계산</div>
+                </div>
+                <div id="loader-quote">변환 중... ⏳</div>
+            </div>
+        </div>
     </div>
+
     <script>
-        const dropzone = document.getElementById('dropzone');
-        const loader = document.getElementById('loader');
-        
-        dropzone.ondragover = e => { e.preventDefault(); dropzone.style.background = '#e8f2ff'; };
-        dropzone.ondragleave = e => { e.preventDefault(); dropzone.style.background = 'transparent'; };
-        dropzone.ondrop = async e => {
-            e.preventDefault();
-            dropzone.style.background = 'transparent';
-            const file = e.dataTransfer.files[0];
-            if (!file) return;
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            loader.style.display = 'block';
-            dropzone.style.display = 'none';
-            
-            try {
-                const res = await fetch('/upload', { method: 'POST', body: formData });
-                if (!res.ok) throw new Error("변환 실패");
-                const blob = await res.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = "PO_" + file.name;
-                a.click();
-            } catch (err) {
-                alert(err.message);
-            } finally {
-                loader.style.display = 'none';
-                dropzone.style.display = 'block';
-            }
-        };
+        function switchMode(mode) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel-' + mode).classList.add('active');
+            document.getElementById('btn-' + mode).classList.add('active');
+        }
+
+        // PO 드롭존
+        const dzPO = document.getElementById('dropzone-po');
+        const loaderPO = document.getElementById('loader-po');
+        setupDropzone(dzPO, loaderPO, '/upload', 'PO_');
+
+        // Quote 드롭존
+        const dzQuote = document.getElementById('dropzone-quote');
+        const loaderQuote = document.getElementById('loader-quote');
+        setupDropzone(dzQuote, loaderQuote, '/upload_quote', '견적초안_', true);
+
+        function setupDropzone(dz, loader, endpoint, prefix, needsPrice) {
+            dz.ondragover = e => { e.preventDefault(); dz.classList.add('drag-over'); };
+            dz.ondragleave = e => { e.preventDefault(); dz.classList.remove('drag-over'); };
+            dz.ondrop = async e => {
+                e.preventDefault();
+                dz.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                if (needsPrice) {
+                    const raw = document.getElementById('unitPrice').value.replace(/,/g, '');
+                    formData.append('unit_price', raw);
+                }
+
+                loader.style.display = 'block';
+                dz.style.display = 'none';
+
+                try {
+                    const res = await fetch(endpoint, { method: 'POST', body: formData });
+                    if (!res.ok) { const err = await res.json(); throw new Error(err.error || '변환 실패'); }
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = prefix + file.name;
+                    a.click();
+                } catch (err) {
+                    alert('❌ ' + err.message);
+                } finally {
+                    loader.style.display = 'none';
+                    dz.style.display = 'block';
+                }
+            };
+        }
     </script>
 </body>
 </html>
