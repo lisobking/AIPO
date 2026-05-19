@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoPO Draft Master</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 400px; }
+        .dropzone { border: 2px dashed #007aff; border-radius: 10px; padding: 40px 20px; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .dropzone:hover { background: #e8f2ff; }
+        h1 { color: #1d1d1f; margin-bottom: 5px; }
+        p { color: #86868b; font-size: 14px; }
+        #loader { display: none; margin-top: 20px; color: #007aff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>👔 AutoPO Draft</h1>
+        <p>견적서(Excel/PDF)를 드래그 앤 드롭 하세요.</p>
+        <div class="dropzone" id="dropzone">파일을 이곳에 놓으세요</div>
+        <div id="loader">변환 중... ⏳</div>
+    </div>
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const loader = document.getElementById('loader');
+        
+        dropzone.ondragover = e => { e.preventDefault(); dropzone.style.background = '#e8f2ff'; };
+        dropzone.ondragleave = e => { e.preventDefault(); dropzone.style.background = 'transparent'; };
+        dropzone.ondrop = async e => {
+            e.preventDefault();
+            dropzone.style.background = 'transparent';
+            const file = e.dataTransfer.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            loader.style.display = 'block';
+            dropzone.style.display = 'none';
+            
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: formData });
+                if (!res.ok) throw new Error("변환 실패");
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "PO_" + file.name;
+                a.click();
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                loader.style.display = 'none';
+                dropzone.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
