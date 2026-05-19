@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPO 타임라인 활용 가이드</title>
+    <style>
+        :root {
+            --primary: #007aff;
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --border: #d2d2d7;
+            --code-bg: #f4f4f5;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+        }
+        .card h2 {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .workflow-step {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .workflow-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .step-number {
+            background-color: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .step-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        code {
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 14px;
+            color: #d10e5c;
+        }
+        .highlight {
+            background-color: #e8f2ff;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>듀얼 타임라인 시스템 활용 가이드</h1>
+            <p>AutoPO Project: 거시적 문맥(Macro)과 미시적 코드(Micro)의 완벽한 동기화</p>
+        </div>
+
+        <div class="card">
+            <h2>🌍 두 가지 타임라인의 이해</h2>
+            <p>이 프로젝트는 AI 에이전트의 환각을 방지하고 컨텍스트를 최적화하기 위해 두 가지 타임라인을 연동하여 사용합니다.</p>
+            <ul>
+                <li><strong>프로젝트 타임라인 (Macro):</strong> <code>docs/timeline/</code> 디렉토리에 마크다운으로 기록되는 기능 단위의 기획 및 인수인계 문서입니다.</li>
+                <li><strong>VS Code 타임라인 (Micro):</strong> 에디터 좌측 하단에 위치하며, 파일 저장 내역(Local History)과 Git 커밋(Commit) 내역을 코드 라인 단위로 추적합니다.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🚀 실전 활용 워크플로우</h2>
+            
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>작업 완료 및 자율 기록</h3>
+                    <p>개발자 에이전트(박부장)가 코드를 수정 완료하면, PM 에이전트가 이를 감지하여 자율적으로 <code>docs/timeline/entries/</code>에 <strong>상세 마크다운 문서</strong>를 생성합니다.</p>
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Git 커밋 동기화</h3>
+                    <p>개발자는 코드를 Git에 커밋할 때, 타임라인 문서의 접두어를 커밋 메시지에 포함시킵니다. <br>예: <code>git commit -m "[20260519_feat] 엑셀 파싱 엔진 수정"</code></p>
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>마스터 인덱스 갱신</h3>
+                    <p>PM 에이전트는 해당 Git Commit Hash 값을 <code>docs/timeline/index.md</code> 표에 기록하여 문서와 실제 코드를 강력하게 연결합니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔍 문제 해결 (디버깅) 방법론</h2>
+            
+            <div class="highlight">
+                <strong>🔽 Top-Down 추적 (기획 의도에서 코드 찾기)</strong><br>
+                1. <code>index.md</code>에서 작업 내역과 Git Commit Hash 확인<br>
+                2. VS Code 하단 타임라인에 Hash 검색<br>
+                3. 해당 기능 개발 시 <strong>정확히 변경된 코드 라인만</strong> 확인 및 수정
+            </div>
+
+            <div class="highlight">
+                <strong>🔼 Bottom-Up 추적 (코드에서 기획 의도 찾기)</strong><br>
+                1. 이해가 안 가는 코드를 VS Code 타임라인에서 클릭하여 커밋 메시지 확인<br>
+                2. 메시지 앞의 태그 (예: <code>[20260519_feat]</code>) 확인<br>
+                3. <code>docs/timeline/entries/</code> 폴더에서 해당 태그의 파일 열람하여 <strong>기획 의도와 검증 내용</strong> 파악
+            </div>
+        </div>
+    </div>
+</body>
+</html>
