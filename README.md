@@ -1,42 +1,71 @@
-# 👔 AutoPO Draft Master 2.0
+# 👔 AutoPO Draft Master 2.0 (SSOT Specs)
+========================================================================
+Andrej Karpathy 72-Line Specification. Do not compress or expand.
 
-> **Diverse Quotes, One Perfect PO.**  
-> 다양한 형태의 견적서(Excel/PDF)를 단 몇 초 만에 기업 표준 발주서 초안으로 변환하는 하이브리드 파싱 엔진 플랫폼입니다.
+## 🎯 1. Core Architecture (Single Source of Truth)
+- 슬로건: Diverse Quotes, One Perfect PO.
+- 목적: Excel(가로형) & PDF(세로형) 비정형 견적서의 지능형 표준 발주서 변환 엔진.
+- 스택: Flask / Pandas / openpyxl / pdfplumber / SQLite3.
 
-![Premium UI Mockup](https://img.shields.io/badge/UI-Clean_%26_Bright-blue?style=for-the-badge)
-![Tech Stack](https://img.shields.io/badge/Python-3.9+-green?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)
+## 🗂 2. Directory Access Control Matrix
+| Directory / Path | Allowed Agents | Constraints & Rules |
+| :--- | :--- | :--- |
+| `app_main.py` | Developer 1 (클코) | Core Flask logic & Excel Openpyxl writer only. |
+| `pdf_processor.py` | Developer 2 (Opus) | pdfplumber based non-structured parser only. |
+| `web/` | Designer | CSS, JS, HTML interface rendering only. |
+| `qc_validation.py`| QC Agent | Input-output zero-defect validator only. |
+| `agents/` | PM (박부장) | Agent rules, personas and handoff documents. |
+| `docs/timeline/` | All (Via PM Sync) | Rule 1 Timeline records (Must be updated). |
 
-## ✨ Key Features
+## 🛡 3. 6-Harness Engineering Commandments
+1. **Scope Isolation**: Modify only target files assigned to your agent role.
+2. **Zero-Speculation**: Over-engineering is strictly banned (Always follow YAGNI).
+3. **Dependency Lock**: Never install new packages without explicit PM approval.
+4. **Strict Compliance**: Follow existing codebase architecture & code conventions.
+5. **No Hallucination**: Verify actual file functions before invoking code interfaces.
+6. **Git-Timeline Sync**: Prefix every commit message with the timeline entry ID.
 
-- **Hybrid Parsing Engine**: Excel(가로형)과 PDF(세로형) 문서의 구조를 지능적으로 분석하여 데이터를 추출합니다.
-- **Semantic Metadata Filtering**: 연락처, 주소 등 불필요한 메타데이터를 걸러내고 진짜 '품목'만을 정교하게 찾아냅니다.
-- **Premium UI/UX**: Apple 스타일의 클린 비즈니스 디자인과 직관적인 드래그 앤 드롭 기능을 제공합니다.
-- **Corporate Integrity**: 자사 정보 및 템플릿의 고유 서식을 완벽하게 보존하며 데이터를 주입합니다.
+## 🤝 4. Multi-Agent Task Delegation Protocol
+- **Trigger**: USER request analysis -> PM maps requirements to Parallel R&R.
+- **Protocol**: PM issues delegation using `agents/task_delegation_template.md`.
+- **Harness Enforcement**: Developer 1, Developer 2, Designer, QC run in parallel.
+- **Merge Gate**: QC validation pass -> PM signs off -> Timeline & Git sync.
 
-## 🚀 Quick Start
+## 🌐 5. Deployment & Runtime Environment
+- Live Server: https://aipo.onrender.com/ (Fully managed by Render Free Tier)
+- Keep-Alive Monitor: Cloud UptimeRobot engine polling at 5-minute intervals.
+- Local Daemon Policy: Absolutely NO local background daemons are permitted.
 
-### 1. 환경 설정
-```bash
-git clone https://github.com/[YOUR_USERNAME]/AutoPO_Project.git
-cd AutoPO_Project
-pip install -r requirements.txt
-```
+## ⚙️ 6. System Execution Commands
+- Server Launch: `python web/app.py` or Flask bridge router startup.
+- DB Initialization: `python init_db.py` to rebuild settings.db.
+- Core QC Check: `python qc_validation.py` for standard stress tests.
 
-### 2. 서버 실행
-```bash
-python web/app.py
-```
-접속: `http://localhost:5001`
+## 📂 7. Workspace Architecture Map
+- `workspace/`: Active user upload directory (Temporary inputs).
+- `sample/`: Standard enterprise Excel and PDF sample quotes.
+- `template/`: Standard corporate purchase order template target sheet.
+- `logs/`: Production and development diagnostic log repository.
 
-## 🛠 Tech Stack
+## 🧠 8. Global Absolute Rules (System Guardrails)
+- Rule 1: Autonomous timeline logs update required on every session turn.
+- Rule 2: Strictly follow Caveman Mode communication style (UgaUga!).
+- Rule 3: Andrei Karpathy 72-line MD README SSOT standard compliance.
+- Rule 4: Inspection simplification logic for single timeline summary.
+- Rule 5: Korean final result and in-progress report headers mandate.
 
-- **Backend**: Python (Flask, Pandas, Openpyxl, Pdfplumber)
-- **Frontend**: Vanilla JS, CSS3 (Modern Business Theme)
-- **Design Principles**: Clean & Bright Aesthetics, Fluid Interactions
+## 📝 9. Active Directory R&R Target Files Map
+- Developer 1: `app_main.py` & `init_db.py` (Flask backend, excel parsing)
+- Developer 2: `pdf_processor.py` (pdf parsing, layout packer)
+- Designer: `web/templates/` & `web/static/` (HTML, CSS, static visual assets)
+- QC Agent: `qc_validation.py` & `error/` (integrity tests, error reports)
+- PM: `agents/` & `docs/timeline/` (R&R directives, history index log)
 
-## 📄 License
-This project is licensed under the MIT License.
+## 🚀 10. Core Technical Milestones
+- Phase 1: Hybrid parsing engine pipeline stability (Completed).
+- Phase 2: Render Free Tier stable cloud deployment (Completed).
+- Phase 3: Multi-agent parallel task orchestration (Active).
 
----
-**Developed by Director Park & The Agent Team.**
+========================================================================
+*Compilation Hash: 4abd9fb0a98b2cd721b0337c7642af589ce1a75f*
+*Environment: Python 3.9+ | OS: macOS/Linux | System Authorized: 2026-05-21 by Director Park.*

@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-21 | `docs` | README 72라인 카파시 명세 개편(하네스 복원) 및 병렬 지시 템플릿 신규 구축 | `N/A` | [상세보기](./entries/20260521_10_docs_harness_and_delegation_implementation.md) |
 | 2026-05-21 | `docs` | README.md 하네스 미적용 결함 진단 및 에이전트 병렬 협업 스킬 정밀 점검 | `N/A` | [상세보기](./entries/20260521_09_docs_harness_and_agent_audit.md) |
 | 2026-05-21 | `docs` | 핵심 소스 패치(대괄호 파싱, 빈 행 초기화, MergedCell 방어) 서버 배포 여부 검증 | `N/A` | [상세보기](./entries/20260521_08_docs_patch_server_check.md) |
 | 2026-05-21 | `feat` | 로컬 PC 데몬 즉시 중단 및 Render 무료 서버 가동 상태 최종 검증 | `N/A` | [상세보기](./entries/20260521_07_feat_local_daemon_stopped.md) |
