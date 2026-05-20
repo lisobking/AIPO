@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-21 | `docs` | VS Code 타임라인 오류 원인 규명 및 듀얼 타임라인 연동 솔루션 가이드 작성 | `N/A` | [상세보기](./entries/20260521_01_docs_timeline_resolution.md) |
 | 2026-05-20 | `feat` | 대괄호 고객사명 파싱 + 빈 행 C~I열 전체 초기화 + MergedCell 방어 패치 | `N/A` | [상세보기](./entries/20260520_34_feat_pipeline_parser_and_init_upgrade.md) |
 | 2026-05-20 | `fix` | 개발자2(Opus) 에이전트 하네스 엔지니어링 제약 조항 패치 완료 | `N/A` | [상세보기](./entries/20260520_33_fix_dev2_harness_patch.md) |
 | 2026-05-20 | `feat` | Render 무료 서버 슬립 방지용 Keep-Alive 스크립트 구축 및 배포 가이드 제공 | `N/A` | [상세보기](./entries/20260520_32_feat_render_keep_alive.md) |
