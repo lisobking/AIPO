@@ -111,8 +111,8 @@ def validate_conversion(name, source_filename, unit_price):
         return False
 
 if __name__ == "__main__":
-    yuhan_ok = validate_conversion("유한양행 추가 기술지원", "유한양행_공수 산정_2026.02.02 (2).xlsx", 1350000)
-    nh_ok = validate_conversion("NH투자증권 ezMail60 기술지원", "NH투자증권 ezMail60  공수 산정.xlsx", 1350000)
+    yuhan_ok = validate_conversion("유한양행 추가 기술지원", "유한양행_공수 산정_2026.02.02 (2).xlsx", 13500000)
+    nh_ok = validate_conversion("NH투자증권 ezMail60 기술지원", "NH투자증권 ezMail60  공수 산정.xlsx", 13500000)
     
     print("\n==================================================")
     print(f"🏁 최종 검수 리포트 요약")
