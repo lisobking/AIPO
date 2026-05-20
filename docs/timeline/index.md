@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-21 | `feat` | 무료 서버 슬립 모드 방지용 Keep-Alive 데몬 기동 및 배포 가이드 | `N/A` | [상세보기](./entries/20260521_04_feat_keep_alive_deployment.md) |
 | 2026-05-21 | `docs` | 프로젝트 마지막 배포 반영 스펙 상세 보고서 작성 | `N/A` | [상세보기](./entries/20260521_03_docs_deployment_report.md) |
 | 2026-05-21 | `docs` | IDE 터미널 권한 승인 질문 원인 및 지속 허용 설정 가이드 작성 | `N/A` | [상세보기](./entries/20260521_02_docs_permission_guide.md) |
 | 2026-05-21 | `docs` | VS Code 타임라인 오류 원인 규명 및 듀얼 타임라인 연동 솔루션 가이드 작성 | `N/A` | [상세보기](./entries/20260521_01_docs_timeline_resolution.md) |
