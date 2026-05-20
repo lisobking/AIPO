@@ -36,7 +36,7 @@ class PDFQuoteProcessor:
 if __name__ == "__main__":
     # 개발자 2의 로컬 테스트
     processor = PDFQuoteProcessor()
-    sample_pdf = Path("/Users/lisob/Desktop/project2/AutoPO_Project/sample/2026-0418 가온아이(202606 이건창호 그룹웨어용 크로스에디터3 유지보수 1년 견적서).pdf")
+    sample_pdf = Path(__file__).parent / "sample" / "2026-0418 가온아이(202606 이건창호 그룹웨어용 크로스에디터3 유지보수 1년 견적서).pdf"
     if sample_pdf.exists():
         df = processor.extract_data(sample_pdf)
         print("--- 개발자 2: PDF 데이터 구출 성공 ---")

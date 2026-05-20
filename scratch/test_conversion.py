@@ -2,7 +2,7 @@ from app_main import manager
 from pathlib import Path
 import openpyxl
 
-sample_dir = Path("/Users/lisob/Desktop/project2/AutoPO_Project/sample/sam2")
+sample_dir = Path(__file__).parent.parent / "sample" / "sam2"
 yuhan_effort = sample_dir / "유한양행_공수 산정_2026.02.02 (2).xlsx"
 
 print("--- Running Effort-to-Quote Pipeline for Yuhan ---")

@@ -8,7 +8,7 @@ def validate_conversion(name, source_filename, unit_price):
     print(f"🧪 백엔드 검수 시작: {name} (단가: {unit_price:,.0f}원)")
     print(f"==================================================")
     
-    sample_dir = Path("/Users/lisob/Desktop/project2/AutoPO_Project/sample/sam2")
+    sample_dir = Path(__file__).parent.parent / "sample" / "sam2"
     source_path = sample_dir / source_filename
     
     if not source_path.exists():
