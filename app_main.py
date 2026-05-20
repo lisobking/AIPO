@@ -251,12 +251,12 @@ class AutoPOManager:
                 # D열: 내역 (상세 품목명)
                 ws.cell(row=r, column=4, value=f'* {item["name"]}')
                 
-                # F열: M/D (수량)
-                ws.cell(row=r, column=6, value=item['md'])
+                # F열: M/M (수량) [1M/M = 20M/D]
+                ws.cell(row=r, column=6, value=item['md'] / 20.0)
                 
-                # G열: 단가 (G14에만 값을 입력하고 나중에 일괄 재병합하므로 r=14 일 때만 기입)
+                # G열: 단가 (1M/M 단가 = M/D 단가 * 20)
                 if r == 14:
-                    ws.cell(row=14, column=7, value=unit_price)
+                    ws.cell(row=14, column=7, value=unit_price * 20)
                     ws.cell(row=14, column=7).number_format = '#,##0'
                 
                 # H열: 합계 (수식 = F * G14) -> G열이 병합되므로 모든 행이 G14 셀을 곱하도록 지정!
@@ -363,47 +363,7 @@ class AutoPOManager:
                     bigo_text = unicodedata.normalize('NFC', str(bigo_cell.value))
                     bigo_cell.value = bigo_text.replace("유한양행", customer_name)
 
-            # 9. 원본 공수산정서 시트를 두 번째 시트(공수산정근거)로 무가공 복제 복사
-            try:
-                src_wb = load_workbook(file_path)
-                src_ws = src_wb.active
-                
-                # 새 시트 생성
-                dst_ws = wb.create_sheet(title="공수산정근거")
-                
-                # 시트 뷰 옵션 (그리드 보이기 등) 보존
-                if src_ws.views.sheetView:
-                    dst_ws.views.sheetView[0].showGridLines = src_ws.views.sheetView[0].showGridLines
-                else:
-                    dst_ws.views.sheetView[0].showGridLines = True
-                
-                # 열 너비 복제
-                for col_letter, col_dim in src_ws.column_dimensions.items():
-                    dst_ws.column_dimensions[col_letter].width = col_dim.width
-                
-                # 행 높이 복제
-                for row_idx, row_dim in src_ws.row_dimensions.items():
-                    dst_ws.row_dimensions[row_idx].height = row_dim.height
-                
-                # 병합 셀 복제
-                for merged_range in list(src_ws.merged_cells.ranges):
-                    dst_ws.merge_cells(str(merged_range))
-                
-                # 셀 내용 및 셀 서식(스타일) 복제
-                for r in range(1, src_ws.max_row + 1):
-                    for c in range(1, src_ws.max_column + 1):
-                        src_cell = src_ws.cell(row=r, column=c)
-                        dst_cell = dst_ws.cell(row=r, column=c, value=src_cell.value)
-                        
-                        if src_cell.has_style:
-                            dst_cell.font = copy(src_cell.font)
-                            dst_cell.border = copy(src_cell.border)
-                            dst_cell.fill = copy(src_cell.fill)
-                            dst_cell.number_format = copy(src_cell.number_format)
-                            dst_cell.protection = copy(src_cell.protection)
-                            dst_cell.alignment = copy(src_cell.alignment)
-            except Exception as e:
-                logger.error(f"원본 공수산정서 시트 복제 실패: {e}")
+            # 9. 최종 저장 및 가공 완료
 
             wb.save(output_path)
             logger.info(f"가온아이 표준 견적서 초안 생성 성공: {output_path} ({num_items}건, 합계: ₩{total_amount:,.0f})")

@@ -27,10 +27,10 @@ def validate_conversion(name, source_filename, unit_price):
         # --- 시트 목록 검수 ---
         sheets = wb.sheetnames
         print(f"📋 생성된 시트 목록: {sheets}")
-        if len(sheets) < 2 or "공수산정근거" not in sheets:
-            print("❌ 오류: 두 번째 백업 시트('공수산정근거')가 생성되지 않았습니다.")
+        if "공수산정근거" in sheets:
+            print("❌ 오류: 제거 대상인 '공수산정근거' 백업 시트가 여전히 존재합니다.")
             return False
-        print("✅ 시트 검수 통과: '공수산정근거' 시트 탑재 완료.")
+        print("✅ 시트 검수 통과: '공수산정근거' 백업 시트 제외 확인 완료.")
         
         # --- Sheet 1 (견적서) 검수 ---
         ws1 = wb[sheets[0]]
@@ -49,8 +49,13 @@ def validate_conversion(name, source_filename, unit_price):
         print(f"   [B9] 서두 문구: '{intro}'")
         print(f"   [B10] 제안금액란: '{price_text}'")
         
-        # C. 14~17행 데이터 및 템플릿 보존(이행 행) 검수
-        print("   --- 14~17행 세부 내역 검수 ---")
+        # C. 14~17행 데이터 및 템플릿 보존(이행 행) 및 M/M 수량/단가 변환 검수
+        print("   --- 14~17행 세부 내역 및 M/M 변환 비율 검수 ---")
+        expected_mds = {
+            "유한양행_공수 산정_2026.02.02 (2).xlsx": {14: 5.0, 15: 2.0, 16: 3.0},
+            "NH투자증권 ezMail60  공수 산정.xlsx": {14: 5.0, 15: 5.0, 16: 30.0, 17: 20.0}
+        }
+        
         for r in range(14, 18):
             category = ws1.cell(row=r, column=2).value
             sub_category = ws1.cell(row=r, column=3).value
@@ -60,6 +65,22 @@ def validate_conversion(name, source_filename, unit_price):
             total = ws1.cell(row=r, column=8).value
             print(f"   Row {r}: 구분={category}, 기능별={sub_category}, 내역={item_name}, 수량={qty}, 단가={price}, 합계={total}")
             
+            # 수량 M/M 변환 (1M/M = 20M/D) 검증
+            filename_clean = unicodedata.normalize('NFC', source_filename)
+            for key, md_map in expected_mds.items():
+                if unicodedata.normalize('NFC', key) == filename_clean:
+                    if r in md_map:
+                        expected_mm = md_map[r] / 20.0
+                        if abs(qty - expected_mm) > 1e-5:
+                            print(f"❌ 오류: Row {r}의 수량({qty})이 M/M 변환 기준({expected_mm})과 일치하지 않습니다.")
+                            return False
+            
+            # 단가 20배 검증 (1M/M 단가 = M/D 단가 * 20)
+            if r == 14 and price is not None:
+                if price != unit_price * 20:
+                    print(f"❌ 오류: Row 14의 단가({price})가 20배 스케일링된 M/M 단가 기준({unit_price * 20})과 일치하지 않습니다.")
+                    return False
+
             # 17행 '이행' 단계 보존 여부 검증 (품목 수가 4개 이하로 적은 유한양행 파일명의 경우만 체크하도록 구성)
             if r == 17 and "유한양행" in source_filename:
                 if sub_category != "이행" or "* 테스트 및 운영서버 반영" not in str(item_name):
@@ -83,25 +104,6 @@ def validate_conversion(name, source_filename, unit_price):
                 print("❌ 오류: 소계 행 수식이 동적으로 주입되지 않았습니다.")
                 return False
                 
-        # --- Sheet 2 (공수산정근거) 검수 ---
-        ws2 = wb["공수산정근거"]
-        src_wb = openpyxl.load_workbook(source_path)
-        src_ws = src_wb.active
-        
-        print("   --- Sheet 2 (원본 복제) 무가공 일치 검수 ---")
-        print(f"   원본 시트 크기: {src_ws.max_row}행 x {src_ws.max_column}열")
-        print(f"   복제 시트 크기: {ws2.max_row}행 x {ws2.max_column}열")
-        
-        # 특정 셀 임의 샘플 비교 검증 (Row 5, Col 3)
-        sample_src = src_ws.cell(row=5, column=3).value
-        sample_dst = ws2.cell(row=5, column=3).value
-        print(f"   [C5] 데이터 비교: 원본='{sample_src}' | 복제='{sample_dst}'")
-        
-        if sample_src != sample_dst:
-            print("❌ 오류: 원본 공수산정서 시트 데이터가 올바르게 복제되지 않았습니다.")
-            return False
-            
-        print("✅ Sheet 2 원본 무가공 복제 검수 완벽 통과.")
         print(f"🎉 {name} 검수 결과: 100% 무결점 통과!")
         return True
     except Exception as e:
