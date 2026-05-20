@@ -1,138 +1,172 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoPO Draft Master 2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background: radial-gradient(circle at 100% 100%, #EBF2FC 0%, #F4F7FC 100%); 
-            color: #334155; 
-            min-height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: radial-gradient(circle at 100% 100%, #EBF2FC 0%, #F4F7FC 100%);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
-        .container { width: 520px; }
+        .container {
+            width: 520px;
+        }
 
         /* 모드 토글 */
-        .mode-toggle { 
-            display: flex; 
-            background: #E2E8F0; 
-            border-radius: 14px; 
-            padding: 5px; 
-            margin-bottom: 24px; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+        .mode-toggle {
+            display: flex;
+            background: #E2E8F0;
+            border-radius: 14px;
+            padding: 5px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
         }
-        .mode-btn { 
-            flex: 1; 
-            padding: 14px; 
-            text-align: center; 
-            border-radius: 10px; 
-            cursor: pointer; 
+
+        .mode-btn {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
             font-family: 'Outfit', sans-serif;
-            font-size: 14px; 
-            font-weight: 600; 
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-            color: #64748B; 
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #64748B;
         }
-        .mode-btn.active { 
-            background: #ffffff; 
-            color: #007aff; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02); 
+
+        .mode-btn.active {
+            background: #ffffff;
+            color: #007aff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
         }
-        .mode-btn:hover:not(.active) { color: #334155; }
+
+        .mode-btn:hover:not(.active) {
+            color: #334155;
+        }
 
         /* 카드 */
-        .card { 
-            background: #ffffff; 
-            border: 1px solid rgba(226, 232, 240, 0.8); 
-            padding: 40px; 
-            border-radius: 24px; 
-            text-align: center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.01); 
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.01);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.01);
         }
-        
-        h1 { 
+
+        h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 26px; 
-            font-weight: 700; 
+            font-size: 26px;
+            font-weight: 700;
             color: #0F172A;
-            margin-bottom: 8px; 
+            margin-bottom: 8px;
             letter-spacing: -0.5px;
         }
-        .subtitle { 
-            color: #64748B; 
-            font-size: 13.5px; 
-            margin-bottom: 28px; 
+
+        .subtitle {
+            color: #64748B;
+            font-size: 13.5px;
+            margin-bottom: 28px;
         }
 
         /* 드롭존 */
-        .dropzone { 
-            border: 2px dashed #CBD5E1; 
-            border-radius: 16px; 
-            padding: 44px 20px; 
-            cursor: pointer; 
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-            font-size: 14.5px; 
+        .dropzone {
+            border: 2px dashed #CBD5E1;
+            border-radius: 16px;
+            padding: 44px 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14.5px;
             font-weight: 500;
-            color: #64748B; 
+            color: #64748B;
             background: #F8FAFC;
         }
-        .dropzone:hover { 
-            border-color: #007aff; 
-            background: #F0F6FF; 
-            color: #007aff; 
+
+        .dropzone:hover {
+            border-color: #007aff;
+            background: #F0F6FF;
+            color: #007aff;
         }
-        .dropzone.drag-over { 
-            border-color: #0051FF; 
-            background: #E6F0FF; 
-            transform: scale(1.01); 
+
+        .dropzone.drag-over {
+            border-color: #0051FF;
+            background: #E6F0FF;
+            transform: scale(1.01);
             color: #0051FF;
         }
 
         /* 단가 입력 */
-        .price-input-wrap { margin-top: 20px; display: none; }
-        .price-input-wrap.show { display: block; }
-        .price-input-wrap label { 
-            font-size: 12px; 
+        .price-input-wrap {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .price-input-wrap.show {
+            display: block;
+        }
+
+        .price-input-wrap label {
+            font-size: 12px;
             font-weight: 600;
-            color: #475569; 
-            display: block; 
-            margin-bottom: 8px; 
-            text-align: left; 
+            color: #475569;
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .price-input { 
-            width: 100%; 
-            padding: 13px 16px; 
-            background: #F8FAFC; 
-            border: 1px solid #E2E8F0; 
-            border-radius: 12px; 
-            color: #0F172A; 
-            font-size: 15px; 
-            font-family: 'Inter', monospace; 
+
+        .price-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            color: #0F172A;
+            font-size: 15px;
+            font-family: 'Inter', monospace;
             font-weight: 500;
-            outline: none; 
-            transition: all 0.2s ease; 
+            outline: none;
+            transition: all 0.2s ease;
         }
-        .price-input:focus { 
-            border-color: #007aff; 
+
+        .price-input:focus {
+            border-color: #007aff;
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
         }
-        .price-hint { font-size: 11.5px; color: #94A3B8; text-align: right; margin-top: 6px; }
+
+        .price-hint {
+            font-size: 11.5px;
+            color: #94A3B8;
+            text-align: right;
+            margin-top: 6px;
+        }
 
         /* 로딩 스피너 및 진행 상태 */
         .loader-container {
@@ -140,6 +174,7 @@
             margin-top: 24px;
             text-align: center;
         }
+
         .spinner {
             width: 28px;
             height: 28px;
@@ -150,20 +185,30 @@
             display: inline-block;
             margin-bottom: 10px;
         }
+
         .loader-text {
             font-size: 13.5px;
             font-weight: 600;
             color: #007aff;
         }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* 모드별 숨기기 */
-        .panel { display: none; }
-        .panel.active { display: block; }
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="mode-toggle">
@@ -191,8 +236,9 @@
                 <p class="subtitle">공수산정내역서(Excel)를 드래그 앤 드롭 하세요.</p>
                 <div class="dropzone" id="dropzone-quote">📂 공수산정서를 이곳에 놓으세요</div>
                 <div class="price-input-wrap show">
-                    <label>M/D 단가 (원)</label>
-                    <input type="text" class="price-input" id="unitPrice" value="13,500,000" placeholder="예: 13,500,000">
+                    <label>M/M 단가 (원)</label>
+                    <input type="text" class="price-input" id="unitPrice" value="13,500,000"
+                        placeholder="예: 13,500,000">
                     <div class="price-hint">항목별 공수 × 단가 = 금액 자동 계산</div>
                 </div>
                 <div class="loader-container" id="loader-quote">
@@ -277,4 +323,5 @@
         }
     </script>
 </body>
+
 </html>
