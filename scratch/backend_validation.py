@@ -75,10 +75,10 @@ def validate_conversion(name, source_filename, unit_price):
                             print(f"❌ 오류: Row {r}의 수량({qty})이 M/M 변환 기준({expected_mm})과 일치하지 않습니다.")
                             return False
             
-            # 단가 20배 검증 (1M/M 단가 = M/D 단가 * 20)
+            # 단가 검증 (소비자가 단가는 최초 M/D 단가 기준과 일치해야 함)
             if r == 14 and price is not None:
-                if price != unit_price * 20:
-                    print(f"❌ 오류: Row 14의 단가({price})가 20배 스케일링된 M/M 단가 기준({unit_price * 20})과 일치하지 않습니다.")
+                if price != unit_price:
+                    print(f"❌ 오류: Row 14의 단가({price})가 최초 설정 기준단가({unit_price})와 일치하지 않습니다.")
                     return False
 
             # 17행 '이행' 단계 보존 여부 검증 (품목 수가 4개 이하로 적은 유한양행 파일명의 경우만 체크하도록 구성)

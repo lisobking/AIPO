@@ -254,13 +254,13 @@ class AutoPOManager:
                 # F열: M/M (수량) [1M/M = 20M/D]
                 ws.cell(row=r, column=6, value=item['md'] / 20.0)
                 
-                # G열: 단가 (1M/M 단가 = M/D 단가 * 20)
+                # G열: 단가 (소비자가 단가는 최초 설정 기준단가 M/D 그대로 표기)
                 if r == 14:
-                    ws.cell(row=14, column=7, value=unit_price * 20)
+                    ws.cell(row=14, column=7, value=unit_price)
                     ws.cell(row=14, column=7).number_format = '#,##0'
                 
-                # H열: 합계 (수식 = F * G14) -> G열이 병합되므로 모든 행이 G14 셀을 곱하도록 지정!
-                ws.cell(row=r, column=8, value=f'=F{r}*G14')
+                # H열: 합계 (수량은 M/M, 단가는 M/D 기준이므로 F * G14 * 20 수식 주입!)
+                ws.cell(row=r, column=8, value=f'=F{r}*G14*20')
                 ws.cell(row=r, column=8).number_format = '#,##0'
                 
                 # I열: 제안금액 (I14에만 합계 수식을 넣고 나중에 일괄 재병합하므로 r=14 일 때만 기입)
