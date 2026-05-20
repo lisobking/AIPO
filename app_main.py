@@ -155,22 +155,38 @@ class AutoPOManager:
             # 3. 고객사명 및 제안건명 추출 (NFC 한글 자모 분리 정규화 적용)
             import unicodedata
             filename_clean = unicodedata.normalize('NFC', file_path.stem)
-            customer_name = "유한양행"  # 기본값
-            if "유한양행" in filename_clean:
-                customer_name = "유한양행"
-            elif "NH투자증권" in filename_clean or "NH" in filename_clean:
-                customer_name = "NH투자증권"
-            else:
-                parts = filename_clean.replace('_', ' ').replace('-', ' ').split()
-                if parts:
-                    customer_name = parts[0]
-
-            # 제안건명 추출
-            proposal_subject = "그룹웨어시스템 기능개발" # 기본값
-            if "유한양행" in filename_clean:
-                proposal_subject = "신규양식 2종 포함 총 양식 6종 및 SSO 모듈 추가 기술지원"
-            else:
-                proposal_subject = "그룹웨어 추가개발 기술지원"
+            import re
+            
+            # 파일명 정제 (날짜 및 불필요 괄호 제거)
+            clean_name = re.sub(r'\(\d+\)', '', filename_clean)
+            clean_name = re.sub(r'\b\d{4}[.\-/]\d{2}[.\-/]\d{2}\b', '', clean_name)
+            
+            # 언더바(_), 대시(-), 공백 기준 분할
+            tokens = [t.strip() for t in re.split(r'[_,\-\s]+', clean_name) if t.strip()]
+            
+            customer_name = "신규 고객사"
+            proposal_subject = "그룹웨어 시스템 기술지원"
+            
+            if len(tokens) >= 1:
+                # 첫 번째 토큰을 고객사명으로 지정하되 특정 축약/오타 매핑 보정
+                tok_first = tokens[0]
+                if tok_first.upper() in ["NH", "NH투자"]:
+                    customer_name = "NH투자증권"
+                else:
+                    customer_name = tok_first
+                    
+            if len(tokens) >= 2:
+                # 무효 키워드가 아닌 유효 설명 토큰들을 지능적으로 모아서 제안건명 빌드
+                invalid_keywords = {"공수", "산정", "내역", "내역서", "ezMail", "ezMail60", "템플릿"}
+                subject_tokens = [t for t in tokens[1:] if not any(k in t for k in invalid_keywords)]
+                if subject_tokens:
+                    proposal_subject = " ".join(subject_tokens)
+                else:
+                    # 마땅한 유효 토큰이 없으면 첫 토큰 뒤의 모든 토큰 결합
+                    proposal_subject = " ".join(tokens[1:])
+            elif len(tokens) == 1:
+                # 토큰이 하나뿐이면 파일명 전체를 제안건명으로 우회 설정
+                proposal_subject = tokens[0]
 
             customer_name = unicodedata.normalize('NFC', customer_name)
             proposal_subject = unicodedata.normalize('NFC', proposal_subject)
