@@ -106,8 +106,11 @@ class AutoPOManager:
 
     def process_effort_to_quote(self, file_path, unit_price, template_path=None):
         """공수산정내역서 → 가온아이 표준 견적서 템플릿 기반 동적 주입"""
+        file_path = Path(file_path)
         if not template_path:
             template_path = PROJECT_ROOT / "template" / "Standard_Quote_Template.xlsx"
+        else:
+            template_path = Path(template_path)
             
         output_path = QUOTE_OUTPUT_DIR / f"견적초안_{file_path.stem}.xlsx"
         
@@ -185,9 +188,14 @@ class AutoPOManager:
             filename_clean = unicodedata.normalize('NFC', file_path.stem)
             import re
             
-            # 파일명 정제 (날짜 및 불필요 괄호 제거)
-            clean_name = re.sub(r'\(\d+\)', '', filename_clean)
-            clean_name = re.sub(r'\b\d{4}[.\-/]\d{2}[.\-/]\d{2}\b', '', clean_name)
+            # 파일명 정제 (날짜 및 불필요 괄호/숫자 제거)
+            clean_name = re.sub(r'\(\d+\)', '', filename_clean)  # (1), (2) 등 제거
+            clean_name = re.sub(r'\d{8}', '', clean_name)  # YYYYMMDD 제거 (먼저)
+            clean_name = re.sub(r'\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2}', '', clean_name)  # YYYY.MM.DD 제거
+            clean_name = re.sub(r'\d{6,7}', '', clean_name)  # 6~7자리 숫자코드(견적번호 등) 제거
+            
+            # 대괄호 [] 내부 텍스트를 별도 토큰으로 추출 후 괄호 제거
+            clean_name = re.sub(r'[\[\]]', ' ', clean_name)
             
             # 언더바(_), 대시(-), 공백 기준 분할
             tokens = [t.strip() for t in re.split(r'[_,\-\s]+', clean_name) if t.strip()]
@@ -314,11 +322,14 @@ class AutoPOManager:
                 
                 total_amount += item['amount']
 
-            # 만약 품목이 4개보다 적으면 남는 템플릿 행은 빈 값으로 초기화 (기능별 C열 및 항목구분 D열은 레이아웃 유지 위해 보존)
+            # 만약 품목이 4개보다 적으면 남는 템플릿 행은 빈 값으로 완전히 초기화 (C~I열 전체)
             if num_items < default_rows:
+                from openpyxl.cell.cell import MergedCell
                 for r in range(start_row + num_items, start_row + default_rows):
-                    ws.cell(row=r, column=6, value=None)
-                    ws.cell(row=r, column=8, value=None)
+                    for col in [3, 4, 5, 6, 7, 8, 9]:  # C~I열 전체 초기화
+                        cell = ws.cell(row=r, column=col)
+                        if not isinstance(cell, MergedCell):
+                            cell.value = None
 
             # 6. 소계 행들 탐색 및 업데이트 (위치가 변동되므로 동적 검색)
             soke_row = None
@@ -351,6 +362,9 @@ class AutoPOManager:
                 
                 # G열 단가란(소비자가 단가) 동적 재병합
                 ws.merge_cells(start_row=14, start_column=7, end_row=soke_row - 1, end_column=7)
+
+                # I열 제안금액란(제안금액) 동적 재병합
+                ws.merge_cells(start_row=14, start_column=9, end_row=soke_row - 1, end_column=9)
 
             if grand_soke_row:
                 ws.cell(row=grand_soke_row, column=9, value=f'=SUM(I14:I{start_row + num_items - 1})')
@@ -406,6 +420,64 @@ class AutoPOManager:
                 if bigo_cell.value:
                     bigo_text = unicodedata.normalize('NFC', str(bigo_cell.value))
                     bigo_cell.value = bigo_text.replace("유한양행", customer_name)
+
+            # 8.5. Sheet2에 사용자가 제공한 공수 산정 파일 그대로 무가공 딥카피 복제
+            try:
+                logger.info(f"원본 공수산정서 시트 복제 시작: {file_path} -> Sheet2")
+                src_wb = load_workbook(file_path, data_only=False)
+                src_ws = src_wb[selected_sheet]
+                dst_ws = wb['Sheet2']
+                
+                # Sheet2 기존 데이터, 병합셀, 스타일, 크기 완벽히 초기화
+                dst_ws.views.sheetView[0].showGridLines = True
+                dst_ws.merged_cells.ranges.clear()
+                
+                # 기존 데이터 및 스타일 비우기
+                for r in range(1, dst_ws.max_row + 1):
+                    for c in range(1, dst_ws.max_column + 1):
+                        cell = dst_ws.cell(row=r, column=c)
+                        cell.value = None
+                        cell.style = 'Normal'
+                        
+                # 기존 열 너비 및 행 높이 초기화
+                for col_letter in list(dst_ws.column_dimensions.keys()):
+                    del dst_ws.column_dimensions[col_letter]
+                for row_idx in list(dst_ws.row_dimensions.keys()):
+                    del dst_ws.row_dimensions[row_idx]
+                
+                # 셀 데이터 및 스타일 복제
+                for r in range(1, src_ws.max_row + 1):
+                    for c in range(1, src_ws.max_column + 1):
+                        src_cell = src_ws.cell(row=r, column=c)
+                        dst_cell = dst_ws.cell(row=r, column=c, value=src_cell.value)
+                        if src_cell.has_style:
+                            dst_cell.font = copy(src_cell.font)
+                            dst_cell.border = copy(src_cell.border)
+                            dst_cell.fill = copy(src_cell.fill)
+                            dst_cell.number_format = copy(src_cell.number_format)
+                            dst_cell.protection = copy(src_cell.protection)
+                            dst_cell.alignment = copy(src_cell.alignment)
+                            
+                # 병합 셀 영역 복제
+                dst_ws.merged_cells.ranges.clear()
+                for merged_range in src_ws.merged_cells.ranges:
+                    dst_ws.merge_cells(str(merged_range))
+                    
+                # 열 너비 복제
+                for col_letter, col_dim in src_ws.column_dimensions.items():
+                    dst_ws.column_dimensions[col_letter].width = col_dim.width
+                    if col_dim.hidden:
+                        dst_ws.column_dimensions[col_letter].hidden = col_dim.hidden
+                        
+                # 행 높이 복제
+                for row_idx, row_dim in src_ws.row_dimensions.items():
+                    dst_ws.row_dimensions[row_idx].height = row_dim.height
+                    if row_dim.hidden:
+                        dst_ws.row_dimensions[row_idx].hidden = row_dim.hidden
+                        
+                logger.info(f"원본 공수산정서 시트 복제 성공: {selected_sheet} -> Sheet2")
+            except Exception as e:
+                logger.error(f"원본 시트 복제 실패: {e}")
 
             # 9. 최종 저장 및 가공 완료
 
