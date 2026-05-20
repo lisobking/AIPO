@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-21 | `feat` | 로컬 PC 데몬 즉시 중단 및 Render 무료 서버 가동 상태 최종 검증 | `N/A` | [상세보기](./entries/20260521_07_feat_local_daemon_stopped.md) |
 | 2026-05-21 | `docs` | UptimeRobot 502 Down 오류 분석 및 서버 정상화 복구 가이드 제공 | `N/A` | [상세보기](./entries/20260521_06_docs_uptimerobot_resolution.md) |
 | 2026-05-21 | `docs` | Keep-Alive 데몬 구동 환경(로컬 PC) 가이드 및 영구 보장 방법 제시 | `N/A` | [상세보기](./entries/20260521_05_docs_daemon_location.md) |
 | 2026-05-21 | `feat` | 무료 서버 슬립 모드 방지용 Keep-Alive 데몬 기동 및 배포 가이드 | `N/A` | [상세보기](./entries/20260521_04_feat_keep_alive_deployment.md) |
