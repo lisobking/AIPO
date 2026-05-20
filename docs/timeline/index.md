@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-20 | `feat` | 로컬 개발 및 QC 백그라운드 웹 서버 공식 종료 및 포트 5001 반납 완료 | `N/A` | [상세보기](./entries/20260520_18_feat_shutdown_local_development_server.md) |
 | 2026-05-20 | `test` | 오프라인 검수용 최초 기준단가 1,350만 원(13,500,000원) 업그레이드 조치 완료 | `245afed` | [상세보기](./entries/20260520_17_test_upgrade_base_price_to_13_5M.md) |
 | 2026-05-20 | `feat` | 소비자가 단가 원복 표기 및 H열 합계 계산식 F*G*20 고도화 패치 완료 | `ae09f9e` | [상세보기](./entries/20260520_16_feat_restore_base_unit_price_formula.md) |
 | 2026-05-20 | `feat` | 박부장 로컬 개발 2.0 업그레이드 (M/M 수량단가 스케일 변환 및 백업시트 제거) | `08df6ce` | [상세보기](./entries/20260520_15_feat_quote_mm_conversion_rules.md) |
