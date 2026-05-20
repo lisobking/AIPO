@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-20 | `feat` | Render 무료 서버 슬립 방지용 Keep-Alive 스크립트 구축 및 배포 가이드 제공 | `N/A` | [상세보기](./entries/20260520_32_feat_render_keep_alive.md) |
 | 2026-05-20 | `feat` | Seet2(Sheet2) 공수산정 시트 동적 감지 및 자동 분석 파이프라인 탑재 | `N/A` | [상세보기](./entries/20260520_31_feat_sheet2_effort_parser.md) |
 | 2026-05-20 | `docs` | 원시인 모드(우가우가) 공식 복구 및 재가동 완료 | `N/A` | [상세보기](./entries/20260520_30_docs_restore_caveman_mode.md) |
 | 2026-05-20 | `docs` | 안티그래비티 설정 화면에 대한 사용자 소통 및 맥락 오해 정정 완료 | `N/A` | [상세보기](./entries/20260520_29_docs_antigravity_settings_discussion.md) |
