@@ -7,6 +7,8 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-20 | `docs` | PM 박부장 에이전트별 업무 분배 및 공식 핸드오프 지시서 발부 완료 | `N/A` | [상세보기](./entries/20260520_23_docs_pm_handoff_directive_assigned.md) |
+| 2026-05-20 | `docs` | 동적 공수산정서 파서 및 미지 고객사 대응 범용 확장 사양서 작성 | `N/A` | [상세보기](./entries/20260520_22_docs_parser_generic_extension_guide.md) |
 | 2026-05-20 | `feat` | 엑셀 합계 수식 표준 원복 (=F*G) 및 M/M 기준 금액 연산 패치 완료 | `d3ed91e` | [상세보기](./entries/20260520_21_feat_restore_standard_formula.md) |
 | 2026-05-20 | `design` | 웹 UI 라벨 M/D 단가에서 M/M 단가로 최종 갱신 및 재배포 완료 | `6c9666f` | [상세보기](./entries/20260520_20_feat_web_label_upgrade_to_mm_price.md) |
 | 2026-05-20 | `feat` | 웹 프론트엔드 기본 M/D 단가 입력창 1,350만 원(13,500,000) 업그레이드 완료 | `d6692cb` | [상세보기](./entries/20260520_19_feat_web_default_price_upgrade_to_13_5M.md) |
