@@ -53,6 +53,7 @@ def validate_conversion(name, source_filename, unit_price):
         print("   --- 14~17행 세부 내역 및 M/M 변환 비율 검수 ---")
         expected_mds = {
             "유한양행_공수 산정_2026.02.02 (2).xlsx": {14: 5.0, 15: 2.0, 16: 3.0},
+            "유한양행 신규 양식 2종 포함 총 양식 6종 및 SSO 모듈 추가 기술지원_가온아이_2602107.xlsx": {14: 5.0, 15: 2.0, 16: 3.0},
             "NH투자증권 ezMail60  공수 산정.xlsx": {14: 5.0, 15: 5.0, 16: 30.0, 17: 20.0}
         }
         
@@ -82,7 +83,7 @@ def validate_conversion(name, source_filename, unit_price):
                     return False
 
             # 17행 '이행' 단계 보존 여부 검증 (품목 수가 4개 이하로 적은 유한양행 파일명의 경우만 체크하도록 구성)
-            if r == 17 and "유한양행" in source_filename:
+            if r == 17 and ("유한양행" in filename_clean or "유한양행" in filename_clean):
                 if sub_category != "이행" or "* 테스트 및 운영서버 반영" not in str(item_name):
                     print("❌ 오류: 템플릿 17행의 표준 '이행' 공정 텍스트가 훼손되었습니다.")
                     return False
@@ -111,12 +112,14 @@ def validate_conversion(name, source_filename, unit_price):
         return False
 
 if __name__ == "__main__":
-    yuhan_ok = validate_conversion("유한양행 추가 기술지원", "유한양행_공수 산정_2026.02.02 (2).xlsx", 13500000)
+    yuhan_ok = validate_conversion("유한양행 추가 기술지원 (시트1)", "유한양행_공수 산정_2026.02.02 (2).xlsx", 13500000)
+    yuhan_sheet2_ok = validate_conversion("유한양행 추가 기술지원 (Sheet2)", "유한양행 신규 양식 2종 포함 총 양식 6종 및 SSO 모듈 추가 기술지원_가온아이_2602107.xlsx", 13500000)
     nh_ok = validate_conversion("NH투자증권 ezMail60 기술지원", "NH투자증권 ezMail60  공수 산정.xlsx", 13500000)
     
     print("\n==================================================")
     print(f"🏁 최종 검수 리포트 요약")
     print(f"==================================================")
-    print(f"유한양행 파이프라인 검증: {'SUCCESS (패스)' if yuhan_ok else 'FAILED (오류)'}")
+    print(f"유한양행 파이프라인 검증 (시트1): {'SUCCESS (패스)' if yuhan_ok else 'FAILED (오류)'}")
+    print(f"유한양행 파이프라인 검증 (Sheet2): {'SUCCESS (패스)' if yuhan_sheet2_ok else 'FAILED (오류)'}")
     print(f"NH투자증권 파이프라인 검증: {'SUCCESS (패스)' if nh_ok else 'FAILED (오류)'}")
     print("==================================================")

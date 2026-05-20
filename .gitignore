@@ -4,6 +4,11 @@ workspace/01_input_quotes/*
 workspace/02_output_pos/*
 !workspace/01_input_quotes/.gitkeep
 !workspace/02_output_pos/.gitkeep
+workspace/03_input_effort/*
+workspace/04_output_quotes/*
+!workspace/03_input_effort/.gitkeep
+!workspace/04_output_quotes/.gitkeep
+logs/
 .DS_Store
 server.log
 nohup.out
@@ -11,3 +16,4 @@ nohup.out
 env/
 .gemini/
 agents/*.md
+

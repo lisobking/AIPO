@@ -113,9 +113,37 @@ class AutoPOManager:
         
         try:
             # 1. 공수산정서 데이터 파싱
-            df_raw = pd.read_excel(file_path, header=None)
+            xl = pd.ExcelFile(file_path)
+            sheet_names = xl.sheet_names
+            
+            selected_sheet = None
+            
+            # 모든 시트를 뒤져서 '공수' 관련 컬럼이 존재하는 시트를 찾음
+            for sheet in sheet_names:
+                try:
+                    df_temp = pd.read_excel(file_path, sheet_name=sheet, header=None)
+                    header_idx_temp = self.find_effort_header(df_temp)
+                    effort_df_temp = pd.read_excel(file_path, sheet_name=sheet, header=header_idx_temp)
+                    if self.find_effort_col(effort_df_temp.columns) is not None:
+                        selected_sheet = sheet
+                        break
+                except Exception:
+                    continue
+            
+            # 만약 공수 컬럼이 있는 시트를 못 찾았다면, 이름이 'sheet2'나 'seet2'인 시트가 있는지 확인
+            if selected_sheet is None:
+                target_sheets = [s for s in sheet_names if s.lower() in ['sheet2', 'seet2']]
+                if target_sheets:
+                    selected_sheet = target_sheets[0]
+            
+            # 그래도 없으면 그냥 첫 번째 시트 사용
+            if selected_sheet is None:
+                selected_sheet = sheet_names[0]
+            
+            logger.info(f"선택된 공수 산정 시트: {selected_sheet}")
+            df_raw = pd.read_excel(file_path, sheet_name=selected_sheet, header=None)
             header_idx = self.find_effort_header(df_raw)
-            effort_df = pd.read_excel(file_path, header=header_idx)
+            effort_df = pd.read_excel(file_path, sheet_name=selected_sheet, header=header_idx)
 
             item_col = self.find_item_col(effort_df.columns)
             effort_col = self.find_effort_col(effort_df.columns)
