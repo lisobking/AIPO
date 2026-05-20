@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-20 | `feat` | Render 구형 web/app.py 기동 우회용 최신 포워더 라우터 구축 및 배포 완료 | `ab0c695` | [상세보기](./entries/20260520_14_feat_render_web_app_forwarder.md) |
 | 2026-05-20 | `feat` | 원격 깃허브 푸시 성공 및 Render 플랫폼 라이브 자동 배포 트리거 완료 | `9ce1a75` | [상세보기](./entries/20260520_13_feat_git_push_to_trigger_render.md) |
 | 2026-05-20 | `feat` | 타인 실행성 보장 깃소스 검증 및 절대 경로 상대화 리팩토링 완료 | `9ce1a75` | [상세보기](./entries/20260520_12_feat_git_readiness_relative_paths.md) |
 | 2026-05-20 | `feat` | 최종 산출물 및 타임라인 기록 깃(Git) 반영 및 커밋 완료 | `24f1784` | [상세보기](./entries/20260520_11_feat_git_commit_and_push.md) |
