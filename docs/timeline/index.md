@@ -7,6 +7,7 @@
 
 | 일자 (Date) | 유형 (Type) | 작업 요약 (Summary) | Git Commit | 상세 문서 (Link) |
 | :--- | :---: | :--- | :---: | :--- |
+| 2026-05-20 | `feat` | 백엔드 하드코딩 완전 제거 및 지능형 동적 파일명 토큰 파서 실장 완료 | `38524a3` | [상세보기](./entries/20260520_24_feat_dynamic_metadata_tokenizer_implemented.md) |
 | 2026-05-20 | `docs` | PM 박부장 에이전트별 업무 분배 및 공식 핸드오프 지시서 발부 완료 | `N/A` | [상세보기](./entries/20260520_23_docs_pm_handoff_directive_assigned.md) |
 | 2026-05-20 | `docs` | 동적 공수산정서 파서 및 미지 고객사 대응 범용 확장 사양서 작성 | `N/A` | [상세보기](./entries/20260520_22_docs_parser_generic_extension_guide.md) |
 | 2026-05-20 | `feat` | 엑셀 합계 수식 표준 원복 (=F*G) 및 M/M 기준 금액 연산 패치 완료 | `d3ed91e` | [상세보기](./entries/20260520_21_feat_restore_standard_formula.md) |
